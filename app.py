@@ -8,7 +8,7 @@ st.set_page_config(page_title="Eco Pediátrico", layout="wide")
 st.title("🫀 Generador de Ecocardiograma Pediátrico")
 
 # =========================================================
-# FUNCIÓN SUPERFICIE CORPORAL
+# FUNCIONES GENERALES
 # =========================================================
 def calcular_superficie_corporal(peso, talla):
     try:
@@ -18,6 +18,8 @@ def calcular_superficie_corporal(peso, talla):
         return round(sc, 3)
     except:
         return ""
+
+
 def calcular_gradiente_bernoulli(velocidad):
     try:
         v = float(velocidad)
@@ -25,6 +27,34 @@ def calcular_gradiente_bernoulli(velocidad):
         return round(gradiente, 1)
     except:
         return ""
+
+
+def clasificar_hap(psap):
+    try:
+        p = float(psap)
+        if p < 30:
+            return "Sin hipertensión pulmonar"
+        elif 30 <= p < 45:
+            return "Hipertensión pulmonar leve"
+        elif 45 <= p < 65:
+            return "Hipertensión pulmonar moderada"
+        else:
+            return "Hipertensión pulmonar severa"
+    except:
+        return ""
+
+
+def crear_word(texto):
+    doc = Document()
+    for linea in texto.split("\n"):
+        doc.add_paragraph(linea)
+
+    buffer = BytesIO()
+    doc.save(buffer)
+    buffer.seek(0)
+    return buffer
+
+
 # =========================================================
 # FILIACIÓN
 # =========================================================
@@ -47,10 +77,7 @@ with col2:
     eps = st.text_input("EPS")
 
 with col3:
-    tipo_documento = st.selectbox(
-        "Tipo documento",
-        ["CC", "TI", "RC", "CE"]
-    )
+    tipo_documento = st.selectbox("Tipo documento", ["CC", "TI", "RC", "CE"])
     numero_documento = st.text_input("Documento")
     fecha = st.date_input("Fecha", value=date.today())
 
@@ -90,7 +117,10 @@ with col_g2:
     apex = st.selectbox("Apex", ["Levoapex", "Dextroapex", "Mesoapex"])
 
 with col_g3:
-    concordancia = st.selectbox("Concordancia", ["Normal", "Alterada"])
+    concordancia = st.selectbox(
+        "Concordancia",
+        ["Concordancia AV y VA", "Discordancia AV", "Discordancia VA", "Discordancia AV y VA"]
+    )
 
 st.subheader("Doppler cuantitativo")
 
@@ -114,8 +144,10 @@ with col_d3:
     aorta_grad_texto = f"{aorta_grad} mmHg" if aorta_grad != "" else ""
     st.text_input("Gradiente aorta (mmHg)", value=aorta_grad_texto, disabled=True, key="aorta_grad_calc")
 
+st.divider()
+
 # =========================================================
-# DEFECTOS
+# DEFECTOS ESTRUCTURALES
 # =========================================================
 st.subheader("Defectos estructurales")
 
@@ -220,22 +252,75 @@ with tab3:
         pca_shunt = ""
         pca_gradiente = ""
 
+st.divider()
+
 # =========================================================
-# TEXTO
+# MEDIDAS ESTRUCTURALES PHN
 # =========================================================
-def clasificar_hap(psap):
-    try:
-        p = float(psap)
-        if p < 30:
-            return "Sin hipertensión pulmonar"
-        elif 30 <= p < 45:
-            return "Hipertensión pulmonar leve"
-        elif 45 <= p < 65:
-            return "Hipertensión pulmonar moderada"
-        else:
-            return "Hipertensión pulmonar severa"
-    except:
-        return ""
+st.subheader("Medidas estructurales cardíacas (PHN)")
+
+tab_m1, tab_m2, tab_m3, tab_m4 = st.tabs([
+    "Aorta y grandes vasos",
+    "Pulmonares y válvulas",
+    "Ventrículo izquierdo",
+    "Coronarias"
+])
+
+with tab_m1:
+    col_a1, col_a2 = st.columns(2)
+
+    with col_a1:
+        ANN = st.text_input("Diámetro del anillo aórtico (ANN) - mm", key="ANN")
+        ROOT = st.text_input("Diámetro de la raíz aórtica (ROOT) - mm", key="ROOT")
+        STJ = st.text_input("Diámetro de la unión sinotubular (STJ) - mm", key="STJ")
+        AAO = st.text_input("Diámetro de aorta ascendente (AAO) - mm", key="AAO")
+
+    with col_a2:
+        ARCHPROX = st.text_input("Diámetro del arco aórtico proximal (ARCHPROX) - mm", key="ARCHPROX")
+        ARCHDIST = st.text_input("Diámetro del arco aórtico distal (ARCHDIST) - mm", key="ARCHDIST")
+        ISTH = st.text_input("Diámetro del istmo aórtico (ISTH) - mm", key="ISTH")
+
+with tab_m2:
+    col_p1, col_p2 = st.columns(2)
+
+    with col_p1:
+        MPA = st.text_input("Diámetro del tronco pulmonar (MPA) - mm", key="MPA")
+        RPA = st.text_input("Diámetro de la arteria pulmonar derecha (RPA) - mm", key="RPA")
+        LPA = st.text_input("Diámetro de la arteria pulmonar izquierda (LPA) - mm", key="LPA")
+        MVAP = st.text_input("Diámetro anteroposterior mitral (MVAP) - mm", key="MVAP")
+        MVLAT = st.text_input("Diámetro lateral mitral (MVLAT) - mm", key="MVLAT")
+
+    with col_p2:
+        TVAP = st.text_input("Diámetro anteroposterior tricuspídeo (TVAP) - mm", key="TVAP")
+        TVLAT = st.text_input("Diámetro lateral tricuspídeo (TVLAT) - mm", key="TVLAT")
+        PVLAX = st.text_input("Diámetro anular pulmonar eje largo (PVLAX) - mm", key="PVLAX")
+        PVSAX = st.text_input("Diámetro anular pulmonar eje corto (PVSAX) - mm", key="PVSAX")
+
+with tab_m3:
+    col_vi1, col_vi2 = st.columns(2)
+
+    with col_vi1:
+        LVEDD = st.text_input("Diámetro telediastólico endocárdico del ventrículo izquierdo (LVEDD) - mm", key="LVEDD")
+        LVPWT = st.text_input("Espesor de la pared posterior del VI en diástole (LVPWT) - mm", key="LVPWT")
+
+    with col_vi2:
+        LVST = st.text_input("Espesor septal del VI en diástole (LVST) - mm", key="LVST")
+
+with tab_m4:
+    col_c1, col_c2 = st.columns(2)
+
+    with col_c1:
+        LMCA = st.text_input("Diámetro de la coronaria izquierda principal (LMCA) - mm", key="LMCA")
+        LAD = st.text_input("Diámetro de la descendente anterior proximal (LAD) - mm", key="LAD")
+
+    with col_c2:
+        RCA = st.text_input("Diámetro de la coronaria derecha proximal (RCA) - mm", key="RCA")
+
+st.divider()
+
+# =========================================================
+# FUNCIONES TEXTO
+# =========================================================
 def texto_cia():
     if sia != "con defecto":
         return "Septum interauricular íntegro."
@@ -273,6 +358,8 @@ def texto_cia():
             texto += " " + ". ".join(bordes) + "."
 
     return texto
+
+
 def texto_civ():
     if siv != "con defecto":
         return "Septum interventricular íntegro."
@@ -294,6 +381,7 @@ def texto_civ():
         texto += " Se observa aneurisma formado por la valva septal de la tricúspide."
 
     return texto
+
 
 def texto_pca():
     if pca != "Sí":
@@ -317,94 +405,27 @@ def texto_pca():
         texto += f", con gradiente de {pca_gradiente} mmHg"
 
     texto += "."
+
     return texto
-def crear_word(reporte):
-    doc = Document()
 
-    # ======================
-    # TÍTULO
-    # ======================
-    titulo = doc.add_paragraph()
-    run = titulo.add_run("REPORTE DE ECOCARDIOGRAMA PEDIÁTRICO")
-    run.bold = True
-    titulo.alignment = 1  # centrado
-
-    doc.add_paragraph("")  # espacio
-
-    # ======================
-    # FILIACIÓN
-    # ======================
-    doc.add_paragraph("DATOS DEL PACIENTE", style='Heading 2')
-
-    doc.add_paragraph(f"Nombre: {nombre}")
-    doc.add_paragraph(f"Edad: {edad_numero} {edad_unidad}")
-    doc.add_paragraph(f"Peso: {peso} kg")
-    doc.add_paragraph(f"Talla: {talla} cm")
-    doc.add_paragraph(f"Superficie corporal: {sc_texto}")
-    doc.add_paragraph(f"Institución: {institucion}")
-    doc.add_paragraph(f"Documento: {numero_documento}")
-    doc.add_paragraph(f"Fecha: {fecha}")
-
-    doc.add_paragraph("")
-
-    # ======================
-    # HALLAZGOS
-    # ======================
-    doc.add_paragraph("HALLAZGOS", style='Heading 2')
-
-    for linea in hallazgos.split("\n"):
-        if linea.strip():
-            doc.add_paragraph(linea)
-
-    doc.add_paragraph("")
-
-    # ======================
-    # DOPPLER
-    # ======================
-    doc.add_paragraph("DOPPLER CUANTITATIVO", style='Heading 2')
-
-    doc.add_paragraph(f"Válvula pulmonar: velocidad {vp_vel} m/s, gradiente máximo {vp_grad} mmHg")
-    doc.add_paragraph(f"Válvula aórtica: velocidad {vao_vel} m/s, gradiente máximo {vao_grad} mmHg")
-
-    doc.add_paragraph("")
-
-    # ======================
-    # CONCLUSIONES
-    # ======================
-    doc.add_paragraph("CONCLUSIONES", style='Heading 2')
-
-    for linea in conclusiones_txt.split("\n"):
-        if linea.strip():
-            doc.add_paragraph(linea)
-
-    doc.add_paragraph("")
-    doc.add_paragraph("__________________________________")
-    doc.add_paragraph("Dr. Guillermo Aristizabal Villa")
-    doc.add_paragraph("Cardiólogo Pediatra - Hemodinamista")
-
-    # Guardar
-    buffer = BytesIO()
-    doc.save(buffer)
-    buffer.seek(0)
-    return buffer
 
 # =========================================================
 # HALLAZGOS
 # =========================================================
 if modo_normal:
-    hallazgos = f"""1. Situs solitus auricular.
+    hallazgos = """1. Situs solitus auricular.
 2. Levocardia - Levoapex.
 3. Concordancia AV y VA.
 4. Septum interauricular íntegro.
 5. Septum interventricular íntegro.
 6. Sin conducto arterioso."""
-    
+
     if vp_vel:
         hallazgos += f"\n7. Válvula pulmonar: velocidad {vp_vel} m/s, gradiente máximo {vp_grad} mmHg."
-    
+
     if vao_vel:
         hallazgos += f"\n8. Válvula aórtica: velocidad {vao_vel} m/s, gradiente máximo {vao_grad} mmHg."
-        
+
     if aorta_vel:
         hallazgos += f"\n9. Aorta descendente: velocidad {aorta_vel} m/s, gradiente máximo {aorta_grad} mmHg."
 else:
@@ -414,6 +435,7 @@ else:
 4. {texto_cia()}
 5. {texto_civ()}
 6. {texto_pca()}"""
+
 # =========================================================
 # CONCLUSIONES
 # =========================================================
@@ -440,7 +462,76 @@ if hap:
 
 if fevi:
     conclusiones.append(f"Función sistólica y diastólica biventricular conservada. FEVI {fevi} %")
+
 conclusiones_txt = "\n".join([f"{i+1}. {c}" for i, c in enumerate(conclusiones)])
+
+# =========================================================
+# TABLA DE MEDIDAS PHN
+# =========================================================
+z_scores = {
+    "ANN": "",
+    "ROOT": "",
+    "STJ": "",
+    "AAO": "",
+    "ARCHPROX": "",
+    "ARCHDIST": "",
+    "ISTH": "",
+    "MPA": "",
+    "RPA": "",
+    "LPA": "",
+    "MVAP": "",
+    "MVLAT": "",
+    "TVAP": "",
+    "TVLAT": "",
+    "PVLAX": "",
+    "PVSAX": "",
+    "LVEDD": "",
+    "LVPWT": "",
+    "LVST": "",
+    "LMCA": "",
+    "LAD": "",
+    "RCA": ""
+}
+
+medidas_phn = []
+
+def agregar_medida(nombre, abrev, valor):
+    if valor != "":
+        medidas_phn.append({
+            "estructura": f"{nombre} ({abrev})",
+            "mm": valor,
+            "zscore": z_scores.get(abrev, "")
+        })
+
+agregar_medida("Diámetro del anillo aórtico", "ANN", ANN)
+agregar_medida("Diámetro de la raíz aórtica", "ROOT", ROOT)
+agregar_medida("Diámetro de la unión sinotubular", "STJ", STJ)
+agregar_medida("Diámetro de aorta ascendente", "AAO", AAO)
+agregar_medida("Diámetro del arco aórtico proximal", "ARCHPROX", ARCHPROX)
+agregar_medida("Diámetro del arco aórtico distal", "ARCHDIST", ARCHDIST)
+agregar_medida("Diámetro del istmo aórtico", "ISTH", ISTH)
+agregar_medida("Diámetro del tronco pulmonar", "MPA", MPA)
+agregar_medida("Diámetro de la arteria pulmonar derecha", "RPA", RPA)
+agregar_medida("Diámetro de la arteria pulmonar izquierda", "LPA", LPA)
+agregar_medida("Diámetro anteroposterior mitral", "MVAP", MVAP)
+agregar_medida("Diámetro lateral mitral", "MVLAT", MVLAT)
+agregar_medida("Diámetro anteroposterior tricuspídeo", "TVAP", TVAP)
+agregar_medida("Diámetro lateral tricuspídeo", "TVLAT", TVLAT)
+agregar_medida("Diámetro anular pulmonar eje largo", "PVLAX", PVLAX)
+agregar_medida("Diámetro anular pulmonar eje corto", "PVSAX", PVSAX)
+agregar_medida("Diámetro telediastólico endocárdico del ventrículo izquierdo", "LVEDD", LVEDD)
+agregar_medida("Espesor de la pared posterior del VI en diástole", "LVPWT", LVPWT)
+agregar_medida("Espesor septal del VI en diástole", "LVST", LVST)
+agregar_medida("Diámetro de la coronaria izquierda principal", "LMCA", LMCA)
+agregar_medida("Diámetro de la descendente anterior proximal", "LAD", LAD)
+agregar_medida("Diámetro de la coronaria derecha proximal", "RCA", RCA)
+
+medidas_txt = ""
+if medidas_phn:
+    medidas_txt = "MEDIDAS ESTRUCTURALES PHN:\n"
+    for fila in medidas_phn:
+        ztxt = f" | Z-score: {fila['zscore']}" if fila["zscore"] != "" else ""
+        medidas_txt += f"- {fila['estructura']}: {fila['mm']} mm{ztxt}\n"
 
 # =========================================================
 # REPORTE
@@ -459,10 +550,12 @@ Documento: {numero_documento}
 EPS: {eps}
 Fecha: {fecha}
 
+Ventana acústica: {ventana_acustica}
+
 HALLAZGOS:
 {hallazgos}
 
-DOPPLER CUANTITATIVO:
+{medidas_txt}DOPPLER CUANTITATIVO:
 Válvula pulmonar: velocidad {vp_vel} m/s, gradiente máximo {vp_grad} mmHg.
 Válvula aórtica: velocidad {vao_vel} m/s, gradiente máximo {vao_grad} mmHg.
 Aorta descendente: velocidad {aorta_vel} m/s, gradiente máximo {aorta_grad} mmHg.
@@ -473,6 +566,6 @@ CONCLUSIONES:
 
 archivo = crear_word(reporte)
 
-st.text_area("Reporte", reporte, height=400)
+st.text_area("Reporte", reporte, height=500)
 
 st.download_button("Descargar Word", archivo, "reporte.docx")
