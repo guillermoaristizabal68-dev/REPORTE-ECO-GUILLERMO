@@ -248,9 +248,27 @@ def texto_civ():
 
 def texto_pca():
     if pca != "Sí":
-        return "Sin PCA."
-    return f"PCA de {pca_diam} mm."
+        return "Sin conducto arterioso."
 
+    texto = "Ductus arterioso persistente"
+
+    if pca_pulm:
+        texto += f" de {pca_pulm} mm de diámetro en su extremo pulmonar"
+
+    if pca_aortico:
+        texto += f", {pca_aortico} mm en su extremo aórtico"
+
+    if pca_longitud:
+        texto += f" y {pca_longitud} mm de longitud"
+
+    if pca_shunt:
+        texto += f", con cortocircuito de {pca_shunt}"
+
+    if pca_gradiente:
+        texto += f", con gradiente de {pca_gradiente} mmHg"
+
+    texto += "."
+    return texto
 def crear_word(reporte):
     doc = Document()
 
