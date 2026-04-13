@@ -121,30 +121,104 @@ st.subheader("Defectos estructurales")
 
 tab1, tab2, tab3 = st.tabs(["CIA", "CIV", "PCA"])
 
+# ------------------ CIA ------------------
 with tab1:
-    sia = st.selectbox("Septum interauricular", ["íntegro", "con defecto"])
+    sia = st.selectbox("Septum interauricular", ["íntegro", "con defecto"], key="sia")
+
     if sia == "con defecto":
-        tipo_cia = st.selectbox("Tipo CIA", ["Ostium Secundum", "Ostium Primum"], key="tipo_cia")
+        tipo_cia = st.selectbox(
+            "Tipo CIA",
+            ["Ostium Secundum", "Ostium Primum", "Seno venoso superior", "Seno venoso inferior"],
+            key="tipo_cia"
+        )
         diam_cia = st.text_input("Diámetro CIA (mm)", key="diam_cia")
+        shunt_cia = st.selectbox(
+            "Shunt CIA",
+            ["izquierda a derecha", "bidireccional", "derecha a izquierda"],
+            key="shunt_cia"
+        )
         gradiente_cia = st.text_input("Gradiente CIA (mmHg)", key="grad_cia")
-    else:
-        tipo_cia = diam_cia = gradiente_cia = ""
 
+        if tipo_cia == "Ostium Secundum":
+            st.markdown("**Bordes CIA ostium secundum (mm)**")
+            borde_vci = st.text_input("Borde vena cava inferior", key="borde_vci")
+            borde_vcs = st.text_input("Borde vena cava superior", key="borde_vcs")
+            borde_vp = st.text_input("Borde venas pulmonares", key="borde_vp")
+            borde_aortico = st.text_input("Borde aórtico", key="borde_aortico")
+            borde_contraaortico = st.text_input("Borde contraaórtico", key="borde_contraaortico")
+            borde_valvas_av = st.text_input("Borde válvulas AV", key="borde_valvas_av")
+        else:
+            borde_vci = ""
+            borde_vcs = ""
+            borde_vp = ""
+            borde_aortico = ""
+            borde_contraaortico = ""
+            borde_valvas_av = ""
+    else:
+        tipo_cia = ""
+        diam_cia = ""
+        shunt_cia = ""
+        gradiente_cia = ""
+        borde_vci = ""
+        borde_vcs = ""
+        borde_vp = ""
+        borde_aortico = ""
+        borde_contraaortico = ""
+        borde_valvas_av = ""
+
+# ------------------ CIV ------------------
 with tab2:
-    siv = st.selectbox("Septum interventricular", ["íntegro", "con defecto"])
-    if siv == "con defecto":
-        tipo_civ = st.selectbox("Tipo CIV", ["perimembranosa", "muscular"], key="tipo_civ")
-        diam_civ = st.text_input("Diámetro CIV (mm)", key="diam_civ")
-        gradiente_civ = st.text_input("Gradiente CIV (mmHg)", key="grad_civ")
-    else:
-        tipo_civ = diam_civ = gradiente_civ = ""
+    siv = st.selectbox("Septum interventricular", ["íntegro", "con defecto"], key="siv")
 
-with tab3:
-    pca = st.selectbox("PCA", ["No", "Sí"])
-    if pca == "Sí":
-        pca_diam = st.text_input("Diámetro PCA (mm)", key="diam_pca")
+    if siv == "con defecto":
+        tipo_civ = st.selectbox(
+            "Tipo CIV",
+            ["perimembranosa", "muscular", "de entrada", "subpulmonar", "subaórtica"],
+            key="tipo_civ"
+        )
+        diam_civ = st.text_input("Diámetro CIV (mm)", key="diam_civ")
+        shunt_civ = st.selectbox(
+            "Shunt CIV",
+            ["izquierda a derecha", "bidireccional", "derecha a izquierda"],
+            key="shunt_civ"
+        )
+        gradiente_civ = st.text_input("Gradiente CIV (mmHg)", key="grad_civ")
+
+        if tipo_civ == "perimembranosa":
+            aneurisma_civ = st.selectbox(
+                "Aneurisma valva septal tricúspide",
+                ["No", "Sí"],
+                key="aneurisma_civ"
+            )
+        else:
+            aneurisma_civ = ""
     else:
-        pca_diam = ""
+        tipo_civ = ""
+        diam_civ = ""
+        shunt_civ = ""
+        gradiente_civ = ""
+        aneurisma_civ = ""
+
+# ------------------ PCA ------------------
+with tab3:
+    pca = st.selectbox("Conducto arterioso", ["No", "Sí"], key="pca")
+
+    if pca == "Sí":
+        pca_pulm = st.text_input("Diámetro extremo pulmonar (mm)", key="pca_pulm")
+        pca_aortico = st.text_input("Diámetro extremo aórtico (mm)", key="pca_aortico")
+        pca_longitud = st.text_input("Longitud del ductus (mm)", key="pca_longitud")
+        pca_shunt = st.selectbox(
+            "Shunt PCA",
+            ["izquierda a derecha", "bidireccional", "derecha a izquierda"],
+            key="pca_shunt"
+        )
+        pca_gradiente = st.text_input("Gradiente PCA (mmHg)", key="pca_grad")
+    else:
+        pca_pulm = ""
+        pca_aortico = ""
+        pca_longitud = ""
+        pca_shunt = ""
+        pca_gradiente = ""
 
 # =========================================================
 # TEXTO
