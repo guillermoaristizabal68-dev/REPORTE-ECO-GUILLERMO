@@ -244,7 +244,24 @@ def texto_cia():
 def texto_civ():
     if siv != "con defecto":
         return "Septum interventricular íntegro."
-    return f"CIV {tipo_civ} de {diam_civ} mm, gradiente {gradiente_civ} mmHg."
+
+    texto = f"Comunicación interventricular {tipo_civ}"
+
+    if diam_civ:
+        texto += f" de {diam_civ} mm"
+
+    if shunt_civ:
+        texto += f", con cortocircuito de {shunt_civ}"
+
+    if gradiente_civ:
+        texto += f", con gradiente de {gradiente_civ} mmHg"
+
+    texto += "."
+
+    if tipo_civ == "perimembranosa" and aneurisma_civ == "Sí":
+        texto += " Se observa aneurisma formado por la valva septal de la tricúspide."
+
+    return texto
 
 def texto_pca():
     if pca != "Sí":
