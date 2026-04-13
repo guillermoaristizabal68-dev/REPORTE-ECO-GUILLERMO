@@ -43,7 +43,56 @@ def clasificar_hap(psap):
     except:
         return ""
 
+# =========================================================
+# PARÁMETROS PHN PARA Z-SCORE
+# =========================================================
+PHN_PARAMS = {
+    "ANN": {"alpha": 0.50, "mean": 1.48, "sd": 0.14, "unit": "cm"},
+    "ROOT": {"alpha": 0.50, "mean": 2.06, "sd": 0.18, "unit": "cm"},
+    "STJ": {"alpha": 0.50, "mean": 1.69, "sd": 0.16, "unit": "cm"},
+    "AAO": {"alpha": 0.50, "mean": 1.79, "sd": 0.18, "unit": "cm"},
+    "ARCHPROX": {"alpha": 0.50, "mean": 1.53, "sd": 0.23, "unit": "cm"},
+    "ARCHDIST": {"alpha": 0.50, "mean": 1.36, "sd": 0.19, "unit": "cm"},
+    "ISTH": {"alpha": 0.50, "mean": 1.25, "sd": 0.18, "unit": "cm"},
+    "MPA": {"alpha": 0.50, "mean": 1.82, "sd": 0.24, "unit": "cm"},
+    "RPA": {"alpha": 0.50, "mean": 1.07, "sd": 0.18, "unit": "cm"},
+    "LPA": {"alpha": 0.50, "mean": 1.10, "sd": 0.18, "unit": "cm"},
+    "LVEDD": {"alpha": 0.45, "mean": 3.89, "sd": 0.33, "unit": "cm"},
+    "LVPWT": {"alpha": 0.40, "mean": 0.57, "sd": 0.09, "unit": "cm"},
+    "LVST": {"alpha": 0.40, "mean": 0.58, "sd": 0.09, "unit": "cm"},
+    "MVAP": {"alpha": 0.50, "mean": 2.31, "sd": 0.24, "unit": "cm"},
+    "MVLAT": {"alpha": 0.50, "mean": 2.23, "sd": 0.22, "unit": "cm"},
+    "TVAP": {"alpha": 0.50, "mean": 2.36, "sd": 0.28, "unit": "cm"},
+    "TVLAT": {"alpha": 0.50, "mean": 2.36, "sd": 0.29, "unit": "cm"},
+    "PVLAX": {"alpha": 0.50, "mean": 2.01, "sd": 0.28, "unit": "cm"},
+    "PVSAX": {"alpha": 0.50, "mean": 1.91, "sd": 0.24, "unit": "cm"},
+    "LMCA": {"alpha": 0.45, "mean": 2.95, "sd": 0.57, "unit": "mm"},
+    "LAD": {"alpha": 0.45, "mean": 1.90, "sd": 0.34, "unit": "mm"},
+    "RCA": {"alpha": 0.45, "mean": 2.32, "sd": 0.55, "unit": "mm"},
+}
+def calcular_zscore_phn(abrev, valor_mm, bsa):
+    try:
+        if valor_mm == "" or bsa == "":
+            return ""
 
+        params = PHN_PARAMS.get(abrev)
+        if not params:
+            return ""
+
+        valor = float(valor_mm)
+        bsa = float(bsa)
+
+        # convertir mm → cm si aplica
+        if params["unit"] == "cm":
+            valor = valor / 10
+
+        indexed = valor / (bsa ** params["alpha"])
+        z = (indexed - params["mean"]) / params["sd"]
+
+        return round(z, 2)
+    except:
+        return ""
+    
 def crear_word(texto):
     doc = Document()
     for linea in texto.split("\n"):
@@ -54,7 +103,35 @@ def crear_word(texto):
     buffer.seek(0)
     return buffer
 
-
+# =========================================================
+# PARÁMETROS REALES PHN PARA Z-SCORE
+# Fórmula: z = ((medida / BSA**alpha) - mean) / sd
+# OJO: algunas estructuras PHN están en cm y otras en mm
+# =========================================================
+PHN_PARAMS = {
+    "ANN": {"alpha": 0.50, "mean": 1.48, "sd": 0.14, "unit": "cm"},
+    "ROOT": {"alpha": 0.50, "mean": 2.06, "sd": 0.18, "unit": "cm"},
+    "STJ": {"alpha": 0.50, "mean": 1.69, "sd": 0.16, "unit": "cm"},
+    "AAO": {"alpha": 0.50, "mean": 1.79, "sd": 0.18, "unit": "cm"},
+    "ARCHPROX": {"alpha": 0.50, "mean": 1.53, "sd": 0.23, "unit": "cm"},
+    "ARCHDIST": {"alpha": 0.50, "mean": 1.36, "sd": 0.19, "unit": "cm"},
+    "ISTH": {"alpha": 0.50, "mean": 1.25, "sd": 0.18, "unit": "cm"},
+    "LMCA": {"alpha": 0.45, "mean": 2.95, "sd": 0.57, "unit": "mm"},
+    "LAD": {"alpha": 0.45, "mean": 1.90, "sd": 0.34, "unit": "mm"},
+    "RCA": {"alpha": 0.45, "mean": 2.32, "sd": 0.55, "unit": "mm"},
+    "PVSAX": {"alpha": 0.50, "mean": 1.91, "sd": 0.24, "unit": "cm"},
+    "PVLAX": {"alpha": 0.50, "mean": 2.01, "sd": 0.28, "unit": "cm"},
+    "MPA": {"alpha": 0.50, "mean": 1.82, "sd": 0.24, "unit": "cm"},
+    "RPA": {"alpha": 0.50, "mean": 1.07, "sd": 0.18, "unit": "cm"},
+    "LPA": {"alpha": 0.50, "mean": 1.10, "sd": 0.18, "unit": "cm"},
+    "LVEDD": {"alpha": 0.45, "mean": 3.89, "sd": 0.33, "unit": "cm"},
+    "LVPWT": {"alpha": 0.40, "mean": 0.57, "sd": 0.09, "unit": "cm"},
+    "LVST": {"alpha": 0.40, "mean": 0.58, "sd": 0.09, "unit": "cm"},
+    "MVAP": {"alpha": 0.50, "mean": 2.31, "sd": 0.24, "unit": "cm"},
+    "MVLAT": {"alpha": 0.50, "mean": 2.23, "sd": 0.22, "unit": "cm"},
+    "TVAP": {"alpha": 0.50, "mean": 2.36, "sd": 0.28, "unit": "cm"},
+    "TVLAT": {"alpha": 0.50, "mean": 2.36, "sd": 0.29, "unit": "cm"},
+}
 # =========================================================
 # FILIACIÓN
 # =========================================================
@@ -468,6 +545,30 @@ conclusiones_txt = "\n".join([f"{i+1}. {c}" for i, c in enumerate(conclusiones)]
 # =========================================================
 # TABLA DE MEDIDAS PHN
 # =========================================================
+z_scores = {
+    "ANN": calcular_zscore_phn("ANN", ANN, superficie_corporal),
+    "ROOT": calcular_zscore_phn("ROOT", ROOT, superficie_corporal),
+    "STJ": calcular_zscore_phn("STJ", STJ, superficie_corporal),
+    "AAO": calcular_zscore_phn("AAO", AAO, superficie_corporal),
+    "ARCHPROX": calcular_zscore_phn("ARCHPROX", ARCHPROX, superficie_corporal),
+    "ARCHDIST": calcular_zscore_phn("ARCHDIST", ARCHDIST, superficie_corporal),
+    "ISTH": calcular_zscore_phn("ISTH", ISTH, superficie_corporal),
+    "MPA": calcular_zscore_phn("MPA", MPA, superficie_corporal),
+    "RPA": calcular_zscore_phn("RPA", RPA, superficie_corporal),
+    "LPA": calcular_zscore_phn("LPA", LPA, superficie_corporal),
+    "MVAP": calcular_zscore_phn("MVAP", MVAP, superficie_corporal),
+    "MVLAT": calcular_zscore_phn("MVLAT", MVLAT, superficie_corporal),
+    "TVAP": calcular_zscore_phn("TVAP", TVAP, superficie_corporal),
+    "TVLAT": calcular_zscore_phn("TVLAT", TVLAT, superficie_corporal),
+    "PVLAX": calcular_zscore_phn("PVLAX", PVLAX, superficie_corporal),
+    "PVSAX": calcular_zscore_phn("PVSAX", PVSAX, superficie_corporal),
+    "LVEDD": calcular_zscore_phn("LVEDD", LVEDD, superficie_corporal),
+    "LVPWT": calcular_zscore_phn("LVPWT", LVPWT, superficie_corporal),
+    "LVST": calcular_zscore_phn("LVST", LVST, superficie_corporal),
+    "LMCA": calcular_zscore_phn("LMCA", LMCA, superficie_corporal),
+    "LAD": calcular_zscore_phn("LAD", LAD, superficie_corporal),
+    "RCA": calcular_zscore_phn("RCA", RCA, superficie_corporal),
+}
 z_scores = {
     "ANN": "",
     "ROOT": "",
