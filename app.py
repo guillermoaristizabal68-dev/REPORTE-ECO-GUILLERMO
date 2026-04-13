@@ -239,8 +239,40 @@ def clasificar_hap(psap):
 def texto_cia():
     if sia != "con defecto":
         return "Septum interauricular íntegro."
-    return f"CIA {tipo_cia} de {diam_cia} mm, gradiente {gradiente_cia} mmHg."
 
+    texto = f"Comunicación interauricular tipo {tipo_cia}"
+
+    if diam_cia:
+        texto += f" de {diam_cia} mm de diámetro"
+
+    if shunt_cia:
+        texto += f", con cortocircuito de {shunt_cia}"
+
+    if gradiente_cia:
+        texto += f", con gradiente de {gradiente_cia} mmHg"
+
+    texto += "."
+
+    if tipo_cia == "Ostium Secundum":
+        bordes = []
+
+        if borde_vci:
+            bordes.append(f"Borde de vena cava inferior: {borde_vci} mm")
+        if borde_vcs:
+            bordes.append(f"Borde de vena cava superior: {borde_vcs} mm")
+        if borde_vp:
+            bordes.append(f"Borde de venas pulmonares: {borde_vp} mm")
+        if borde_aortico:
+            bordes.append(f"Borde aórtico: {borde_aortico} mm")
+        if borde_contraaortico:
+            bordes.append(f"Borde contraaórtico: {borde_contraaortico} mm")
+        if borde_valvas_av:
+            bordes.append(f"Borde de válvulas AV: {borde_valvas_av} mm")
+
+        if bordes:
+            texto += " " + ". ".join(bordes) + "."
+
+    return texto
 def texto_civ():
     if siv != "con defecto":
         return "Septum interventricular íntegro."
