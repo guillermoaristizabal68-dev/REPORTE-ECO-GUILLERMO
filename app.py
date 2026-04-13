@@ -569,30 +569,6 @@ z_scores = {
     "LAD": calcular_zscore_phn("LAD", LAD, superficie_corporal),
     "RCA": calcular_zscore_phn("RCA", RCA, superficie_corporal),
 }
-z_scores = {
-    "ANN": "",
-    "ROOT": "",
-    "STJ": "",
-    "AAO": "",
-    "ARCHPROX": "",
-    "ARCHDIST": "",
-    "ISTH": "",
-    "MPA": "",
-    "RPA": "",
-    "LPA": "",
-    "MVAP": "",
-    "MVLAT": "",
-    "TVAP": "",
-    "TVLAT": "",
-    "PVLAX": "",
-    "PVSAX": "",
-    "LVEDD": "",
-    "LVPWT": "",
-    "LVST": "",
-    "LMCA": "",
-    "LAD": "",
-    "RCA": ""
-}
 
 medidas_phn = []
 
