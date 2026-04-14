@@ -202,16 +202,24 @@ col_g1, col_g2, col_g3 = st.columns(3)
 
 with col_g1:
     ventana_acustica = st.selectbox("Ventana acústica", ["Buena", "Regular", "Limitada"])
-    situs = st.selectbox("Situs", ["solitus", "inversus", "ambiguus"])
+    situs = st.selectbox("Situs", ["solitus", "inversus", "Dextroisomerismo", "Levoisomerismo"])
 
 with col_g2:
     cardia = st.selectbox("Cardia", ["Levocardia", "Dextrocardia", "Mesocardia"])
     apex = st.selectbox("Apex", ["Levoapex", "Dextroapex", "Mesoapex"])
+    conexion_av = st.selectbox(
+        "Tipo de conexión atrioventricular",
+        ["Concordante", "Discordante", "Ambigua", "Doble entrada ventricular", "Ausente"]
+    )
 
 with col_g3:
-    concordancia = st.selectbox(
-        "Concordancia",
-        ["Concordancia AV y VA", "Discordancia AV", "Discordancia VA", "Discordancia AV y VA"]
+    conexion_va = st.selectbox(
+        "Tipo de conexión ventrículo-arterial",
+        ["Concordante", "Discordante", "Doble salida", "Única vía de salida"]
+    )
+    modo_conexion = st.selectbox(
+        "Modo de conexión",
+        ["Perforado", "Imperforado", "Cabalgado", "Común"]
     )
 
 st.subheader("Doppler cuantitativo")
@@ -543,12 +551,14 @@ if modo_normal:
     if aorta_vel:
         hallazgos += f"\n9. Aorta descendente: velocidad {aorta_vel} m/s, gradiente máximo {aorta_grad} mmHg."
 else:
-    hallazgos = f"""1. Situs {situs}
-2. {cardia} - {apex}
-3. {concordancia}
-4. {texto_cia()}
-5. {texto_civ()}
-6. {texto_pca()}"""
+    hallazgos = f"""1. Situs {situs}.
+2. {cardia} - {apex}.
+3. Tipo de conexión atrioventricular: {conexion_av}.
+4. Tipo de conexión ventrículo-arterial: {conexion_va}.
+5. Modo de conexión: {modo_conexion}.
+6. {texto_cia()}
+7. {texto_civ()}
+8. {texto_pca()}"""
 
 # =========================================================
 # CONCLUSIONES
