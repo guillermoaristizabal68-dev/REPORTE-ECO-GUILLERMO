@@ -42,7 +42,22 @@ def clasificar_hap(psap):
             return "Hipertensión pulmonar severa"
     except:
         return ""
+    
+def calcular_fevi_teicholz(lvedd_mm, lvesd_mm):
+    try:
+        dd_cm = float(lvedd_mm) / 10
+        ds_cm = float(lvesd_mm) / 10
 
+        vtd = (7 * (dd_cm ** 3)) / (2.4 + dd_cm)
+        vts = (7 * (ds_cm ** 3)) / (2.4 + ds_cm)
+
+        if vtd <= 0:
+            return ""
+
+        fevi = ((vtd - vts) / vtd) * 100
+        return round(fevi, 1)
+    except:
+        return ""
 # =========================================================
 # PARÁMETROS PHN PARA Z-SCORE
 # =========================================================
@@ -378,10 +393,15 @@ with tab_m3:
 
     with col_vi1:
         LVEDD = st.text_input("Diámetro telediastólico endocárdico del ventrículo izquierdo (LVEDD) - mm", key="LVEDD")
+        agregar_medida("Diámetro telesistólico endocárdico del ventrículo izquierdo", "LVESD", LVESD)
+        LVESD = st.text_input("Diámetro telesistólico endocárdico del ventrículo izquierdo (LVESD) - mm", key="LVESD")
         LVPWT = st.text_input("Espesor de la pared posterior del VI en diástole (LVPWT) - mm", key="LVPWT")
 
     with col_vi2:
         LVST = st.text_input("Espesor septal del VI en diástole (LVST) - mm", key="LVST")
+        fevi_teicholz = calcular_fevi_teicholz(LVEDD, LVESD)
+        fevi_teicholz_texto = f"{fevi_teicholz} %" if fevi_teicholz != "" else ""
+        st.text_input("FEVI calculada por Teichholz (%)", value=fevi_teicholz_texto, disabled=True, key="fevi_teicholz")
 
 with tab_m4:
     col_c1, col_c2 = st.columns(2)
@@ -490,7 +510,12 @@ def texto_pca():
 # HALLAZGOS
 # =========================================================
 if modo_normal:
-    hallazgos = f"""1. Situs solitus auricular y abdominal.
+    texto_vi = "13. Ventrículo izquierdo de paredes lisas y tamaño normal. Contractilidad global y segmentaria conservada. Tracto de salida del ventrículo izquierdo libre."
+    
+    if fevi_teicholz != "":
+        texto_vi += f" FEVI por método de Teichholz: {fevi_teicholz} %."
+
+    hallazgos = f"""1. Situs solitus auricular.
 2. Levocardia – Levoapex.
 3. Conexión de venas sistémicas normal a la aurícula derecha.
 4. Conexión de venas pulmonares normal a la aurícula izquierda.
@@ -498,18 +523,18 @@ if modo_normal:
 6. Aurícula derecha de tamaño y función normal.
 7. Concordancia auriculoventricular y ventriculoarterial.
 8. Septum interauricular íntegro.
-9. Válvula tricúspide de morfología, implantación y función normal.
+9. Válvula tricúspide de morfología, implantación y función normal, con insuficiencia ligera.
 10. Válvula mitral de morfología, implantación y función normal, sin estenosis ni insuficiencia.
 11. Septum auriculoventricular indemne.
 12. Septum interventricular íntegro.
-13. Ventrículo izquierdo de paredes lisas y tamaño normal. Contractilidad global y segmentaria conservada. Tracto de salida del ventrículo izquierdo libre.
+{texto_vi}
 14. Ventrículo derecho de tamaño normal, trabeculado, tripartito, con función conservada. Tracto de salida del ventrículo derecho libre.
 15. Válvula aórtica trivalva, con apertura y cierre adecuados. Origen de arterias coronarias de ostium independientes, trayecto proximal normal.
 16. Válvula pulmonar de características normales. Tronco y ramas pulmonares de adecuado calibre.
 17. Sin evidencia de conducto arterioso persistente.
 18. Arco aórtico izquierdo con vasos supraaórticos de origen y trayecto normal. No se evidencian signos de coartación. Flujo pulsátil en aorta abdominal sin corrida diastólica.
 19. Sin derrame pericárdico. Sin vegetaciones. No se observan trombos intracavitarios."""
-
+    
     if vp_vel:
         hallazgos += f"\n7. Válvula pulmonar: velocidad {vp_vel} m/s, gradiente máximo {vp_grad} mmHg."
 
