@@ -528,19 +528,21 @@ if modo_normal:
 4. Conexión de venas pulmonares normal a la aurícula izquierda.
 5. Aurícula izquierda de tamaño y función normal.
 6. Aurícula derecha de tamaño y función normal.
-7. Concordancia auriculoventricular y ventriculoarterial.
-8. Septum interauricular íntegro.
-9. Válvula tricúspide de morfología, implantación y función normal, con insuficiencia ligera.
-10. Válvula mitral de morfología, implantación y función normal, sin estenosis ni insuficiencia.
-11. Septum auriculoventricular indemne.
-12. Septum interventricular íntegro.
+7. Conexión auriculoventricular concordante.
+8. Conexión ventrículo-arterial concordante.
+9. Modo de conexión perforado.
+10. Septum interauricular íntegro.
+11. Válvula tricúspide de morfología, implantación y función normal, con insuficiencia ligera.
+12. Válvula mitral de morfología, implantación y función normal, sin estenosis ni insuficiencia.
+13. Septum auriculoventricular indemne.
+14. Septum interventricular íntegro.
 {texto_vi}
-14. Ventrículo derecho de tamaño normal, trabeculado, tripartito, con función conservada. Tracto de salida del ventrículo derecho libre.
-15. Válvula aórtica trivalva, con apertura y cierre adecuados. Origen de arterias coronarias de ostium independientes, trayecto proximal normal.
-16. Válvula pulmonar de características normales. Tronco y ramas pulmonares de adecuado calibre.
-17. Sin evidencia de conducto arterioso persistente.
-18. Arco aórtico izquierdo con vasos supraaórticos de origen y trayecto normal. No se evidencian signos de coartación. Flujo pulsátil en aorta abdominal sin corrida diastólica.
-19. Sin derrame pericárdico. Sin vegetaciones. No se observan trombos intracavitarios."""
+15. Ventrículo derecho de tamaño normal, trabeculado, tripartito, con función conservada. Tracto de salida del ventrículo derecho libre.
+16. Válvula aórtica trivalva, con apertura y cierre adecuados. Origen de arterias coronarias de ostium independientes, trayecto proximal normal.
+17. Válvula pulmonar de características normales. Tronco y ramas pulmonares de adecuado calibre.
+18. Sin evidencia de conducto arterioso persistente.
+19. Arco aórtico izquierdo con vasos supraaórticos de origen y trayecto normal. No se evidencian signos de coartación. Flujo pulsátil en aorta abdominal sin corrida diastólica.
+20. Sin derrame pericárdico. Sin vegetaciones. No se observan trombos intracavitarios."""
     
     if vp_vel:
         hallazgos += f"\n7. Válvula pulmonar: velocidad {vp_vel} m/s, gradiente máximo {vp_grad} mmHg."
