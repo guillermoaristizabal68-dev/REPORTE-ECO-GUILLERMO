@@ -583,8 +583,6 @@ conclusiones_txt = "\n".join([f"{i+1}. {c}" for i, c in enumerate(conclusiones)]
 # =========================================================
 # TABLA DE MEDIDAS PHN
 # =========================================================
-
-# 1️⃣ Z-SCORES
 z_scores = {
     "ANN": calcular_zscore_phn("ANN", ANN, superficie_corporal),
     "ROOT": calcular_zscore_phn("ROOT", ROOT, superficie_corporal),
@@ -610,10 +608,8 @@ z_scores = {
     "RCA": calcular_zscore_phn("RCA", RCA, superficie_corporal),
 }
 
-# 2️⃣ LISTA
 medidas_phn = []
 
-# 3️⃣ FUNCIÓN (🔥 ESTA ES LA CLAVE)
 def agregar_medida(nombre, abrev, valor):
     if valor != "":
         medidas_phn.append({
@@ -622,7 +618,6 @@ def agregar_medida(nombre, abrev, valor):
             "zscore": z_scores.get(abrev, "")
         })
 
-# 4️⃣ AGREGAR MEDIDAS
 agregar_medida("Diámetro del anillo aórtico", "ANN", ANN)
 agregar_medida("Diámetro de la raíz aórtica", "ROOT", ROOT)
 agregar_medida("Diámetro de la unión sinotubular", "STJ", STJ)
@@ -644,7 +639,7 @@ agregar_medida("Diámetro anular pulmonar eje largo", "PVLAX", PVLAX)
 agregar_medida("Diámetro anular pulmonar eje corto", "PVSAX", PVSAX)
 
 agregar_medida("Diámetro telediastólico endocárdico del VI", "LVEDD", LVEDD)
-agregar_medida("Diámetro telesistólico endocárdico del VI", "LVESD", LVESD)  # 👈 AQUÍ VA EL NUEVO
+agregar_medida("Diámetro telesistólico endocárdico del VI", "LVESD", LVESD)
 agregar_medida("Espesor de la pared posterior del VI en diástole", "LVPWT", LVPWT)
 agregar_medida("Espesor septal del VI en diástole", "LVST", LVST)
 
@@ -652,14 +647,13 @@ agregar_medida("Diámetro de la coronaria izquierda principal", "LMCA", LMCA)
 agregar_medida("Diámetro de la descendente anterior proximal", "LAD", LAD)
 agregar_medida("Diámetro de la coronaria derecha proximal", "RCA", RCA)
 
-# 5️⃣ TEXTO FINAL
 medidas_txt = ""
 if medidas_phn:
     medidas_txt = "MEDIDAS ESTRUCTURALES PHN:\n"
     for fila in medidas_phn:
         ztxt = f" | Z-score: {fila['zscore']}" if fila["zscore"] != "" else ""
         medidas_txt += f"- {fila['estructura']}: {fila['mm']} mm{ztxt}\n"
-
+        
 # =========================================================
 # REPORTE
 # =========================================================
