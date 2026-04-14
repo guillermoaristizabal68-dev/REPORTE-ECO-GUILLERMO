@@ -393,7 +393,6 @@ with tab_m3:
 
     with col_vi1:
         LVEDD = st.text_input("Diámetro telediastólico endocárdico del ventrículo izquierdo (LVEDD) - mm", key="LVEDD")
-        agregar_medida("Diámetro telesistólico endocárdico del ventrículo izquierdo", "LVESD", LVESD)
         LVESD = st.text_input("Diámetro telesistólico endocárdico del ventrículo izquierdo (LVESD) - mm", key="LVESD")
         LVPWT = st.text_input("Espesor de la pared posterior del VI en diástole (LVPWT) - mm", key="LVPWT")
 
