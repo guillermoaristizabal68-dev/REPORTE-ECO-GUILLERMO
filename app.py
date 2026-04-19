@@ -246,6 +246,20 @@ with col_d3:
 
 st.divider()
 
+col_d4, col_d5 = st.columns(2)
+
+with col_d4:
+    vt_vel = st.text_input("Velocidad válvula tricúspide (m/s)", key="vt_vel")
+    vt_grad = calcular_gradiente_bernoulli(vt_vel)
+    vt_grad_texto = f"{vt_grad} mmHg" if vt_grad != "" else ""
+    st.text_input("Gradiente tricuspídeo (mmHg)", value=vt_grad_texto, disabled=True, key="vt_grad_calc")
+
+with col_d5:
+    vm_vel = st.text_input("Velocidad válvula mitral (m/s)", key="vm_vel")
+    vm_grad = calcular_gradiente_bernoulli(vm_vel)
+    vm_grad_texto = f"{vm_grad} mmHg" if vm_grad != "" else ""
+    st.text_input("Gradiente mitral (mmHg)", value=vm_grad_texto, disabled=True, key="vm_grad_calc")
+
 # =========================================================
 # DEFECTOS ESTRUCTURALES
 # =========================================================
@@ -662,6 +676,22 @@ if medidas_phn:
 # =========================================================
 # REPORTE
 # =========================================================
+doppler_txt = "DOPPLER CUANTITATIVO:\n"
+
+if vp_vel:
+    doppler_txt += f"Válvula pulmonar: velocidad {vp_vel} m/s, gradiente máximo {vp_grad} mmHg.\n"
+
+if vao_vel:
+    doppler_txt += f"Válvula aórtica: velocidad {vao_vel} m/s, gradiente máximo {vao_grad} mmHg.\n"
+
+if aorta_vel:
+    doppler_txt += f"Aorta descendente: velocidad {aorta_vel} m/s, gradiente máximo {aorta_grad} mmHg.\n"
+
+if vt_vel:
+    doppler_txt += f"Válvula tricúspide: velocidad {vt_vel} m/s, gradiente máximo {vt_grad} mmHg.\n"
+
+if vm_vel:
+    doppler_txt += f"Válvula mitral: velocidad {vm_vel} m/s, gradiente máximo {vm_grad} mmHg.\n"
 reporte = f"""
 REPORTE ECO
 
@@ -681,15 +711,12 @@ Ventana acústica: {ventana_acustica}
 HALLAZGOS:
 {hallazgos}
 
-{medidas_txt}DOPPLER CUANTITATIVO:
-Válvula pulmonar: velocidad {vp_vel} m/s, gradiente máximo {vp_grad} mmHg.
-Válvula aórtica: velocidad {vao_vel} m/s, gradiente máximo {vao_grad} mmHg.
-Aorta descendente: velocidad {aorta_vel} m/s, gradiente máximo {aorta_grad} mmHg.
+{medidas_txt}
+{doppler_txt}
 
 CONCLUSIONES:
 {conclusiones_txt}
 """
-
 archivo = crear_word(reporte)
 
 st.text_area("Reporte", reporte, height=500)
