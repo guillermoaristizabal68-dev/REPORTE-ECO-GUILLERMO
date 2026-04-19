@@ -516,57 +516,51 @@ def texto_pca():
 # =========================================================
 # HALLAZGOS
 # =========================================================
-if modo_normal:
-    texto_vi = "13. Ventrículo izquierdo de paredes lisas y tamaño normal. Contractilidad global y segmentaria conservada. Tracto de salida del ventrículo izquierdo libre."
-    
-    if fevi_teicholz != "":
-        texto_vi += f" FEVI por método de Teichholz: {fevi_teicholz} %."
+texto_vi = "13. Ventrículo izquierdo de paredes lisas y tamaño normal. Contractilidad global y segmentaria conservada. Tracto de salida del ventrículo izquierdo libre."
+if fevi_teicholz != "":
+    texto_vi += f" FEVI por método de Teichholz: {fevi_teicholz} %."
 
-    hallazgos = f"""1. Situs solitus auricular.
-2. Levocardia – Levoapex.
+punto_8 = "8. Septum interauricular íntegro."
+if sia == "con defecto":
+    punto_8 = f"8. {texto_cia()}"
+
+punto_12 = "12. Septum interventricular íntegro."
+if siv == "con defecto":
+    punto_12 = f"12. {texto_civ()}"
+
+punto_17 = "17. Sin evidencia de conducto arterioso persistente."
+if pca == "Sí":
+    punto_17 = f"17. {texto_pca()}"
+
+hallazgos = f"""1. Situs {situs}.
+2. {cardia} - {apex}.
 3. Conexión de venas sistémicas normal a la aurícula derecha.
 4. Conexión de venas pulmonares normal a la aurícula izquierda.
 5. Aurícula izquierda de tamaño y función normal.
 6. Aurícula derecha de tamaño y función normal.
-7. Conexión auriculoventricular concordante.
-8. Conexión ventrículo-arterial concordante.
-9. Modo de conexión perforado.
-10. Septum interauricular íntegro.
-11. Válvula tricúspide de morfología, implantación y función normal, con insuficiencia ligera.
-12. Válvula mitral de morfología, implantación y función normal, sin estenosis ni insuficiencia.
-13. Septum auriculoventricular indemne.
-14. Septum interventricular íntegro.
+7. Tipo de conexión atrioventricular: {conexion_av}. Tipo de conexión ventrículo-arterial: {conexion_va}. Modo de conexión: {modo_conexion}.
+{punto_8}
+9. Válvula tricúspide de morfología, implantación y función normal, con insuficiencia ligera.
+10. Válvula mitral de morfología, implantación y función normal, sin estenosis ni insuficiencia.
+11. Septum auriculoventricular indemne.
+{punto_12}
 {texto_vi}
-15. Ventrículo derecho de tamaño normal, trabeculado, tripartito, con función conservada. Tracto de salida del ventrículo derecho libre.
-16. Válvula aórtica trivalva, con apertura y cierre adecuados. Origen de arterias coronarias de ostium independientes, trayecto proximal normal.
-17. Válvula pulmonar de características normales. Tronco y ramas pulmonares de adecuado calibre.
-18. Sin evidencia de conducto arterioso persistente.
-19. Arco aórtico izquierdo con vasos supraaórticos de origen y trayecto normal. No se evidencian signos de coartación. Flujo pulsátil en aorta abdominal sin corrida diastólica.
-20. Sin derrame pericárdico. Sin vegetaciones. No se observan trombos intracavitarios."""
-    
-    if vp_vel:
-        hallazgos += f"\n7. Válvula pulmonar: velocidad {vp_vel} m/s, gradiente máximo {vp_grad} mmHg."
-
-    if vao_vel:
-        hallazgos += f"\n8. Válvula aórtica: velocidad {vao_vel} m/s, gradiente máximo {vao_grad} mmHg."
-
-    if aorta_vel:
-        hallazgos += f"\n9. Aorta descendente: velocidad {aorta_vel} m/s, gradiente máximo {aorta_grad} mmHg."
-else:
-    hallazgos = f"""1. Situs {situs}.
-2. {cardia} - {apex}.
-3. Tipo de conexión atrioventricular: {conexion_av}.
-4. Tipo de conexión ventrículo-arterial: {conexion_va}.
-5. Modo de conexión: {modo_conexion}.
-6. {texto_cia()}
-7. {texto_civ()}
-8. {texto_pca()}"""
-
+14. Ventrículo derecho de tamaño normal, trabeculado, tripartito, con función conservada. Tracto de salida del ventrículo derecho libre.
+15. Válvula aórtica trivalva, con apertura y cierre adecuados. Origen de arterias coronarias de ostium independientes, trayecto proximal normal.
+16. Válvula pulmonar de características normales. Tronco y ramas pulmonares de adecuado calibre.
+{punto_17}
+18. Arco aórtico izquierdo con vasos supraaórticos de origen y trayecto normal. No se evidencian signos de coartación. Flujo pulsátil en aorta abdominal sin corrida diastólica.
+19. Sin derrame pericárdico. Sin vegetaciones. No se observan trombos intracavitarios."""
 # =========================================================
 # CONCLUSIONES
 # =========================================================
 conclusiones = []
 
+# Conclusión base anatómica
+if sia != "con defecto" and siv != "con defecto" and pca != "Sí":
+    conclusiones.append("Corazón sin lesiones anatómicas o estructurales")
+
+# Reemplazos / adiciones por defectos
 if sia == "con defecto":
     conclusiones.append(texto_cia())
 
@@ -576,21 +570,21 @@ if siv == "con defecto":
 if pca == "Sí":
     conclusiones.append(texto_pca())
 
-if not conclusiones:
-    conclusiones.append("Corazón sin lesiones anatómicas o estructurales")
-
+# Presión pulmonar y clasificación
 if psap_normal:
-    conclusiones.append(f"PSAP {psap_normal} mmHg")
+    hap = clasificar_hap(psap_normal)
+    if hap:
+        conclusiones.append(f"Presión sistólica de la arteria pulmonar: {psap_normal} mmHg. {hap}.")
+    else:
+        conclusiones.append(f"Presión sistólica de la arteria pulmonar: {psap_normal} mmHg.")
 
-hap = clasificar_hap(psap_normal)
-if hap:
-    conclusiones.append(hap)
-
+# Función ventricular
 if fevi:
     conclusiones.append(f"Función sistólica y diastólica biventricular conservada. FEVI {fevi} %")
+elif fevi_teicholz != "":
+    conclusiones.append(f"Función sistólica y diastólica biventricular conservada. FEVI por método de Teichholz {fevi_teicholz} %")
 
 conclusiones_txt = "\n".join([f"{i+1}. {c}" for i, c in enumerate(conclusiones)])
-
 # =========================================================
 # TABLA DE MEDIDAS PHN
 # =========================================================
