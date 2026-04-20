@@ -1,6 +1,8 @@
 import streamlit as st
 from datetime import date
 from docx import Document
+from docx.shared import RGBColor, Pt
+from docx.enum.text import WD_ALIGN_PARAGRAPH
 from io import BytesIO
 
 st.set_page_config(page_title="Eco Pediátrico", layout="wide")
