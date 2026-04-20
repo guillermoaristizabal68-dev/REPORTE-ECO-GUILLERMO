@@ -724,8 +724,8 @@ if vt_vel:
 if vm_vel:
     doppler_txt += f"Válvula mitral: velocidad {vm_vel} m/s, gradiente máximo {vm_grad} mmHg.\n"
     
-    for item in doppler_extra:
-        doppler_txt += f"{item['nombre']}: velocidad {item['vel']} m/s, gradiente máximo {item['grad']} mmHg.\n"
+for item in doppler_extra:
+    doppler_txt += f"{item['nombre']}: velocidad {item['vel']} m/s, gradiente máximo {item['grad']} mmHg.\n"
 reporte = f"""
 REPORTE ECO
 
