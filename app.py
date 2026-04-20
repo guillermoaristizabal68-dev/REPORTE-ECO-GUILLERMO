@@ -110,10 +110,79 @@ def calcular_zscore_phn(abrev, valor_mm, bsa):
     except:
         return ""
     
-def crear_word(texto):
+def zscore_anormal(z):
+    try:
+        return abs(float(z)) > 2
+    except:
+        return False
+
+
+def crear_word():
     doc = Document()
-    for linea in texto.split("\n"):
-        doc.add_paragraph(linea)
+
+    # TÍTULO
+    titulo = doc.add_paragraph()
+    run = titulo.add_run("REPORTE DE ECOCARDIOGRAMA PEDIÁTRICO")
+    run.bold = True
+    run.font.size = Pt(14)
+    titulo.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+    doc.add_paragraph("")
+
+    # DATOS DEL PACIENTE
+    doc.add_paragraph("DATOS DEL PACIENTE", style="Heading 2")
+    doc.add_paragraph(f"Paciente: {nombre}")
+    doc.add_paragraph(f"Edad: {edad_numero} {edad_unidad}")
+    doc.add_paragraph(f"Peso: {peso} kg   |   Talla: {talla} cm   |   SC: {sc_texto}")
+    doc.add_paragraph(f"Documento: {tipo_documento} {numero_documento}")
+    doc.add_paragraph(f"EPS: {eps}")
+    doc.add_paragraph(f"Institución: {institucion}")
+    doc.add_paragraph(f"Fecha: {fecha}")
+
+    # HALLAZGOS
+    doc.add_paragraph("")
+    doc.add_paragraph("HALLAZGOS", style="Heading 2")
+    for linea in hallazgos.split("\n"):
+        if linea.strip():
+            doc.add_paragraph(linea.strip())
+
+    # TABLA PHN
+    if medidas_phn:
+        doc.add_paragraph("")
+        doc.add_paragraph("MEDIDAS ESTRUCTURALES (Z-SCORE)", style="Heading 2")
+
+        tabla = doc.add_table(rows=1, cols=3)
+        tabla.style = "Table Grid"
+
+        encabezados = tabla.rows[0].cells
+        encabezados[0].text = "Estructura"
+        encabezados[1].text = "mm"
+        encabezados[2].text = "Z-score"
+
+        for fila in medidas_phn:
+            row = tabla.add_row().cells
+            row[0].text = fila["estructura"]
+            row[1].text = str(fila["mm"])
+            row[2].text = "" if fila["zscore"] == "" else str(fila["zscore"])
+
+            if fila["zscore"] != "" and zscore_anormal(fila["zscore"]):
+                for p in row[2].paragraphs:
+                    for r in p.runs:
+                        r.font.color.rgb = RGBColor(255, 0, 0)
+
+    # DOPPLER
+    doc.add_paragraph("")
+    doc.add_paragraph("DOPPLER CUANTITATIVO", style="Heading 2")
+    for linea in doppler_txt.split("\n"):
+        if linea.strip():
+            doc.add_paragraph(linea.strip())
+
+    # CONCLUSIONES
+    doc.add_paragraph("")
+    doc.add_paragraph("CONCLUSIONES", style="Heading 2")
+    for linea in conclusiones_txt.split("\n"):
+        if linea.strip():
+            doc.add_paragraph(linea.strip())
 
     buffer = BytesIO()
     doc.save(buffer)
@@ -753,7 +822,7 @@ HALLAZGOS:
 CONCLUSIONES:
 {conclusiones_txt}
 """
-archivo = crear_word(reporte)
+archivo = crear_word()
 
 st.text_area("Reporte", reporte, height=500)
 
