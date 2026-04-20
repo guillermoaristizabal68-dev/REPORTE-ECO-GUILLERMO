@@ -260,6 +260,37 @@ with col_d5:
     vm_grad_texto = f"{vm_grad} mmHg" if vm_grad != "" else ""
     st.text_input("Gradiente mitral (mmHg)", value=vm_grad_texto, disabled=True, key="vm_grad_calc")
 
+    st.markdown("### Doppler personalizado")
+
+doppler_extra = []
+
+for i in range(3):
+    st.markdown(f"**Estructura adicional {i+1}**")
+    col_extra1, col_extra2, col_extra3 = st.columns(3)
+
+    with col_extra1:
+        extra_nombre = st.text_input(f"Nombre estructura {i+1}", key=f"extra_nombre_{i}")
+
+    with col_extra2:
+        extra_vel = st.text_input(f"Velocidad (m/s) {i+1}", key=f"extra_vel_{i}")
+
+    with col_extra3:
+        extra_grad = calcular_gradiente_bernoulli(extra_vel)
+        extra_grad_texto = f"{extra_grad} mmHg" if extra_grad != "" else ""
+        st.text_input(
+            f"Gradiente (mmHg) {i+1}",
+            value=extra_grad_texto,
+            disabled=True,
+            key=f"extra_grad_{i}"
+        )
+
+    if extra_nombre and extra_vel:
+        doppler_extra.append({
+            "nombre": extra_nombre,
+            "vel": extra_vel,
+            "grad": extra_grad
+        })
+
 # =========================================================
 # DEFECTOS ESTRUCTURALES
 # =========================================================
@@ -692,6 +723,9 @@ if vt_vel:
 
 if vm_vel:
     doppler_txt += f"Válvula mitral: velocidad {vm_vel} m/s, gradiente máximo {vm_grad} mmHg.\n"
+    
+    for item in doppler_extra:
+    doppler_txt += f"{item['nombre']}: velocidad {item['vel']} m/s, gradiente máximo {item['grad']} mmHg.\n"
 reporte = f"""
 REPORTE ECO
 
